@@ -7,6 +7,7 @@ import br.com.davilnv.cooperative.infrastructure.adapters.output.persistence.map
 import br.com.davilnv.cooperative.infrastructure.adapters.output.persistence.repository.AgendaRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -31,5 +32,13 @@ public class AgendaPersistenceAdapter implements AgendaOutputPort {
     public Optional<Agenda> findById(UUID agendaId) {
         return agendaRepository.findById(agendaId)
                 .map(agendaMapper::toDomain);
+    }
+
+    @Override
+    public List<Agenda> findAll() {
+        return agendaRepository.findAll()
+                .stream()
+                .map(agendaMapper::toDomain)
+                .toList();
     }
 }

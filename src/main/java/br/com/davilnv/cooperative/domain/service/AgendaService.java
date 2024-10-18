@@ -6,6 +6,7 @@ import br.com.davilnv.cooperative.application.ports.output.AgendaOutputPort;
 import br.com.davilnv.cooperative.domain.model.Agenda;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -28,4 +29,10 @@ public class AgendaService implements CreateAgendaUseCase, GetAgendaUseCase {
     public Optional<Agenda> getAgenda(UUID agendaId) {
         return agendaOutputPort.findById(agendaId);
     }
+
+    @Override
+    public List<Agenda> getAllAgendas() {
+        return agendaOutputPort.findAll();
+    }
+
 }
