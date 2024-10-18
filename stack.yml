@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres_db
+    environment:
+      POSTGRES_DB: cooperative
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432"  # Mapeia a porta 5433 do host para a porta 5432 do container
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # Persistência de dados
+
+volumes:
+  postgres_data:
