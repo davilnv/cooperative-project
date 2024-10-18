@@ -7,6 +7,7 @@ import br.com.davilnv.cooperative.infrastructure.adapters.input.rest.v1.mapper.A
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -31,6 +32,11 @@ public class AgendaRestAdapter {
         Optional<Agenda> agenda = agendaService.getAgenda(agendaId);
         return agenda.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Agenda>> getAllAgendas() {
+        return ResponseEntity.ok(agendaService.getAllAgendas());
     }
 
 }
