@@ -34,41 +34,6 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
 
-      - name: Build with Maven
-        env:
-          DB_URL: jdbc:postgresql://localhost:5434/cooperative
-          DB_USER: postgres
-          DB_PASSWORD: postgres
-        run: mvn clean package
-
-      - name: Stop any running application
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          script: |
-            # Pare qualquer instância em execução do jar
-            pkill -f 'java -jar cooperative-0.0.1-SNAPSHOT.jar' || true
-
-      - name: Copy files to the server
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          source: "target/*.jar"
-          target: "/home/ec2-user"
-
-      - name: Copy stack.yml database to the server
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          source: "stack.yml"
-          target: "/home/ec2-user"
-
       - name: Install Docker
         uses: appleboy/ssh-action@master
         with:
@@ -114,6 +79,41 @@ jobs:
             else
                 echo "Maven já está instalado."
             fi
+
+      - name: Build with Maven
+        env:
+          DB_URL: jdbc:postgresql://localhost:5434/cooperative
+          DB_USER: postgres
+          DB_PASSWORD: postgres
+        run: mvn clean package
+
+      - name: Stop any running application
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            # Pare qualquer instância em execução do jar
+            pkill -f 'java -jar cooperative-0.0.1-SNAPSHOT.jar' || true
+
+      - name: Copy files to the server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          source: "target/*.jar"
+          target: "/home/ec2-user"
+
+      - name: Copy stack.yml database to the server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          source: "stack.yml"
+          target: "/home/ec2-user"
 
       - name: Run Docker Compose
         uses: appleboy/ssh-action@master
