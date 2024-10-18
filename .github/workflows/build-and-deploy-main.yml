@@ -9,6 +9,21 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:latest
+        ports:
+          - 5434:5432
+        env:
+          POSTGRES_DB: cooperative
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd="pg_isready -U postgres" 
+          --health-interval=10s 
+          --health-timeout=5s 
+          --health-retries=5
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -20,6 +35,10 @@ jobs:
           distribution: 'adopt'
 
       - name: Build with Maven
+        env:
+          DB_URL: jdbc:postgresql://localhost:5434/cooperative
+          DB_USER: postgres
+          DB_PASSWORD: postgres
         run: mvn clean package
 
       - name: Stop any running application
@@ -59,13 +78,42 @@ jobs:
           script: |
             # Instalar Docker
             sudo yum update -y
-            sudo amazon-linux-extras install docker -y
-            sudo service docker start
-            sudo usermod -aG docker ec2-user  # Adiciona o usuário ao grupo docker
-
+            if ! command -v docker &> /dev/null; then
+              sudo amazon-linux-extras install docker -y
+              sudo service docker start
+              sudo usermod -aG docker ec2-user  # Adiciona o usuário ao grupo docker
+            else
+              echo "Docker já está instalado."
+            fi
+            
             # Instalar Docker Compose
-            sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-Linux-x86_64" -o /usr/local/bin/docker-compose
-            sudo chmod +x /usr/local/bin/docker-compose
+            if ! command -v docker-compose &> /dev/null; then
+              sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-Linux-x86_64" -o /usr/local/bin/docker-compose
+              sudo chmod +x /usr/local/bin/docker-compose
+            else
+              echo "Docker Compose já está instalado."
+            fi
+
+      - name: Install Java 17 and Maven
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            # Instalar Java 17
+            if ! command -v java &> /dev/null; then
+              sudo amazon-linux-extras install java-openjdk17 -y
+            else
+              echo "Java já está instalado."
+            fi
+            
+            # Instalar Maven
+            if ! command -v mvn &> /dev/null; then
+              sudo yum install maven -y
+            else
+                echo "Maven já está instalado."
+            fi
 
       - name: Run Docker Compose
         uses: appleboy/ssh-action@master
@@ -75,7 +123,7 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             cd /home/ec2-user
-            sudo docker-compose -f stack.yml up -d  # Executa o stack.yml em modo destacado
+            sudo docker-compose -f stack.yml up -d
 
       - name: Execute the application
         uses: appleboy/ssh-action@master
@@ -85,4 +133,4 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             cd /home/ec2-user
-            nohup java -jar cooperative-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
+            java -jar cooperative-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
