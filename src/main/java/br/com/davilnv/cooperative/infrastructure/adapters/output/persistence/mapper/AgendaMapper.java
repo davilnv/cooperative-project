@@ -3,23 +3,23 @@ package br.com.davilnv.cooperative.infrastructure.adapters.output.persistence.ma
 import br.com.davilnv.cooperative.domain.enums.AgendaStatus;
 import br.com.davilnv.cooperative.domain.model.Agenda;
 import br.com.davilnv.cooperative.infrastructure.adapters.output.persistence.entity.AgendaEntity;
-import br.com.davilnv.cooperative.infrastructure.adapters.output.persistence.entity.AgendaStatusEntity;
-import org.springframework.stereotype.Component;
+import br.com.davilnv.cooperative.infrastructure.adapters.output.persistence.enums.AgendaStatusEntity;
 
-@Component
 public class AgendaMapper {
-    public AgendaEntity toEntity(Agenda agenda) {
+
+    public static AgendaEntity toEntity(Agenda agenda) {
         return new AgendaEntity(
                 agenda.getId(),
                 agenda.getTitle(),
                 agenda.getDescription(),
                 AgendaStatusEntity.valueOf(agenda.getStatus().name()),
                 agenda.getStartDateTime(),
-                agenda.getEndDateTime()
+                agenda.getEndDateTime(),
+                agenda.getVotingSession() != null ? VotingSessionMapper.toEntity(agenda.getVotingSession()) : null
         );
     }
 
-    public Agenda toDomain(AgendaEntity agendaEntity) {
+    public static Agenda toDomain(AgendaEntity agendaEntity) {
         return new Agenda(
                 agendaEntity.getId(),
                 agendaEntity.getTitle(),
