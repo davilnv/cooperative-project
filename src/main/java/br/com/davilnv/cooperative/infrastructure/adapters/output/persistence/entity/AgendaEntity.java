@@ -1,5 +1,6 @@
 package br.com.davilnv.cooperative.infrastructure.adapters.output.persistence.entity;
 
+import br.com.davilnv.cooperative.infrastructure.adapters.output.persistence.enums.AgendaStatusEntity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -28,16 +29,21 @@ public class AgendaEntity {
     @Column(name = "END_DATE_TIME")
     private LocalDateTime endDateTime;
 
+    @OneToOne
+    @JoinColumn(name = "VOTING_SESSION_ID", referencedColumnName = "ID")
+    private VotingSessionEntity votingSession;
+
     public AgendaEntity() {
     }
 
-    public AgendaEntity(UUID id, String title, String description, AgendaStatusEntity status, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+    public AgendaEntity(UUID id, String title, String description, AgendaStatusEntity status, LocalDateTime startDateTime, LocalDateTime endDateTime, VotingSessionEntity votingSession) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.status = status;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
+        this.votingSession = votingSession;
     }
 
     public UUID getId() {
@@ -86,5 +92,13 @@ public class AgendaEntity {
 
     public void setEndDateTime(LocalDateTime endDateTime) {
         this.endDateTime = endDateTime;
+    }
+
+    public VotingSessionEntity getVotingSession() {
+        return votingSession;
+    }
+
+    public void setVotingSession(VotingSessionEntity votingSession) {
+        this.votingSession = votingSession;
     }
 }

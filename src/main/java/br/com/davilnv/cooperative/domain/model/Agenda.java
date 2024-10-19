@@ -12,8 +12,14 @@ public class Agenda {
     private AgendaStatus status;
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
+    private VotingSession votingSession;
 
     public Agenda() {
+    }
+
+    public Agenda(UUID id) {
+        this.id = id;
+        this.status = AgendaStatus.OPEN;
     }
 
     public Agenda(UUID id, String title, String description, AgendaStatus status, LocalDateTime startDateTime, LocalDateTime endDateTime) {
@@ -71,5 +77,13 @@ public class Agenda {
 
     public void setEndDateTime(LocalDateTime endDateTime) {
         this.endDateTime = endDateTime;
+    }
+
+    public VotingSession getVotingSession() {
+        return votingSession;
+    }
+
+    public void setVotingSession(VotingSession votingSession) {
+        this.votingSession = votingSession;
     }
 }
