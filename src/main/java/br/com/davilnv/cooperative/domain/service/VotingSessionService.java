@@ -13,7 +13,6 @@ import br.com.davilnv.cooperative.domain.model.Agenda;
 import br.com.davilnv.cooperative.domain.model.VotingSession;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -49,7 +48,7 @@ public class VotingSessionService implements CreateVotingSessionUseCase, GetVoti
     }
 
     @Override
-    public Optional<VotingSession> getVotingSession(UUID votingSessionId) {
+    public VotingSession getVotingSession(UUID votingSessionId) throws NotFoundVotingSessionException {
         return votingSessionOutputPort.findById(votingSessionId);
     }
 
