@@ -8,6 +8,7 @@ import br.com.davilnv.cooperative.domain.model.VotingSession;
 import br.com.davilnv.cooperative.infrastructure.adapters.input.rest.v1.dto.VotingSessionPostDto;
 import br.com.davilnv.cooperative.infrastructure.adapters.input.rest.v1.mapper.VotingSessionGetDtoMapper;
 import br.com.davilnv.cooperative.infrastructure.adapters.input.rest.v1.mapper.VotingSessionPostDtoMapper;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,7 +27,7 @@ public class VotingSessionRestAdapter {
     }
 
     @PostMapping("/open")
-    public ResponseEntity<?> openVotingSession(@RequestBody VotingSessionPostDto votingSessionDto) {
+    public ResponseEntity<?> openVotingSession(@Valid @RequestBody VotingSessionPostDto votingSessionDto) {
         try {
             VotingSession votingSession = createVotingSessionUseCase.createVotingSession(VotingSessionPostDtoMapper.toDomain(votingSessionDto));
             return new ResponseEntity<>(VotingSessionGetDtoMapper.toDto(votingSession), HttpStatus.CREATED);

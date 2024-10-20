@@ -14,7 +14,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -76,19 +75,18 @@ public class VotingSessionRestAdapterTest extends BaseRestTest {
     @Test
     void openVotingSession_ShouldThrowRequiredAgendaException_WhenAgendaIsNull() throws Exception {
         // Arrange
-        String errorMessage = "Pauta é obrigatória para criar uma sessão de votação";
+        String errorMessage = "O id da pauta é obrigatório";
         when(createVotingSessionUseCase.createVotingSession(any(VotingSession.class)))
                 .thenThrow(new RequiredAgendaException(errorMessage));
         json = getJson("null-voting-session");
 
         // Act & Assert
-        String response = mockMvc.perform(post(baseEndpoint + "/open")
+        mockMvc.perform(post(baseEndpoint + "/open")
                         .contentType(MEDIA_TYPE)
+                        .characterEncoding("UTF-8")
                         .content(json))
                 .andExpect(status().isBadRequest())
-                .andReturn().getResponse().getContentAsString();
-
-        assertEquals(errorMessage, response);
+                .andExpect(jsonPath("$.agendaId").value(errorMessage));
     }
 
     @Test

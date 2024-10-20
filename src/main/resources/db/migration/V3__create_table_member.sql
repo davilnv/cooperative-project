@@ -1,0 +1,7 @@
+CREATE TABLE MEMBER
+(
+    ID          UUID        NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
+    CPF         VARCHAR(11) NOT NULL,
+    MEMBER_NAME VARCHAR(150) NOT NULL,
+    BIRTH_DATE  DATE        NOT NULL
+);
