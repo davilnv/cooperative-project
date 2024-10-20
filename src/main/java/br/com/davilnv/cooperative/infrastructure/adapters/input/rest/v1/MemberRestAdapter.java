@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -49,7 +50,7 @@ public class MemberRestAdapter {
     @GetMapping("/cpf/{cpf}")
     public ResponseEntity<?> getMemberByCpf(@PathVariable String cpf) {
         try {
-            Member member = getMemberUseCase.fgetMemberByCpf(cpf);
+            Member member = getMemberUseCase.getMemberByCpf(cpf);
             return ResponseEntity.ok(member);
         } catch (NotFoundMemberException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -57,11 +58,11 @@ public class MemberRestAdapter {
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllMembers() {
+    public ResponseEntity<List<Member>> getAllMembers() {
         try {
             return ResponseEntity.ok(getMemberUseCase.getAllMembers());
         } catch (NotFoundMemberException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(List.of(), HttpStatus.NOT_FOUND);
         }
     }
 }

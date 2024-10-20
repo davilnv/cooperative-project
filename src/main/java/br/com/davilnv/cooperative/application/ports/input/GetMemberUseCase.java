@@ -10,7 +10,7 @@ public interface GetMemberUseCase {
 
     Member getMember(UUID memberId) throws NotFoundMemberException;
 
-    Member fgetMemberByCpf(String cpf) throws NotFoundMemberException;
+    Member getMemberByCpf(String cpf) throws NotFoundMemberException;
 
     List<Member> getAllMembers() throws NotFoundMemberException;
 

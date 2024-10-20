@@ -50,4 +50,16 @@ public class Member {
     public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        Member member = (Member) obj;
+        return id.equals(member.id) && cpf.equals(member.cpf);
+    }
 }

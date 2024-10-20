@@ -31,7 +31,7 @@ public class MemberService implements CreateMemberUseCase, GetMemberUseCase {
     }
 
     @Override
-    public Member fgetMemberByCpf(String cpf) throws NotFoundMemberException {
+    public Member getMemberByCpf(String cpf) throws NotFoundMemberException {
         return memberOutputPort.findByCpf(cpf);
     }
 
