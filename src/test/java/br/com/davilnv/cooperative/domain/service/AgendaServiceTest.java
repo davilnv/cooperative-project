@@ -48,7 +48,6 @@ public class AgendaServiceTest {
         );
     }
 
-
     @Test
     void createAgenda_ShouldReturnSavedAgenda() {
         // Arrange
@@ -114,7 +113,7 @@ public class AgendaServiceTest {
     }
 
     @Test
-    void getAllAgendas_ShouldReturnListOfAgendas() {
+    void getAllAgendas_ShouldReturnListOfAgendas() throws NotFoundAgendaException {
         // Arrange
         List<Agenda> agendaList = List.of(agenda);
         when(agendaOutputPort.findAll()).thenReturn(agendaList);
@@ -126,6 +125,17 @@ public class AgendaServiceTest {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         assertEquals(1, result.size());
+
+        verify(agendaOutputPort, times(1)).findAll();
+    }
+
+    @Test
+    void getAllAgendas_ShouldThrowNotFoundAgendaException_WhenNotFound() throws NotFoundAgendaException {
+        // Arrange
+        when(agendaOutputPort.findAll()).thenThrow(new NotFoundAgendaException("Nenhuma agenda encontrada"));
+
+        // Act & Assert
+        assertThrows(NotFoundAgendaException.class, () -> agendaService.getAllAgendas());
 
         verify(agendaOutputPort, times(1)).findAll();
     }

@@ -90,4 +90,15 @@ public class Agenda {
     public void setVotingSession(VotingSession votingSession) {
         this.votingSession = votingSession;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        Agenda that = (Agenda) obj;
+
+        return id.equals(that.id);
+
+    }
 }

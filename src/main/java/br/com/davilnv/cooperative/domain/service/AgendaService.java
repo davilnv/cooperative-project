@@ -30,7 +30,7 @@ public class AgendaService implements CreateAgendaUseCase, GetAgendaUseCase {
     }
 
     @Override
-    public List<Agenda> getAllAgendas() {
+    public List<Agenda> getAllAgendas() throws NotFoundAgendaException {
         return agendaOutputPort.findAll();
     }
 
