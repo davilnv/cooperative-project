@@ -1,10 +1,10 @@
 package br.com.davilnv.cooperative.infrastructure.adapters.input.rest.v1;
 
+import br.com.davilnv.cooperative.application.ports.input.CreateVotingSessionUseCase;
 import br.com.davilnv.cooperative.domain.exception.NotFoundAgendaException;
 import br.com.davilnv.cooperative.domain.exception.RequiredAgendaException;
 import br.com.davilnv.cooperative.domain.exception.TheresAlreadyOpenVotingSessionException;
 import br.com.davilnv.cooperative.domain.model.VotingSession;
-import br.com.davilnv.cooperative.domain.service.VotingSessionService;
 import br.com.davilnv.cooperative.infrastructure.adapters.input.rest.v1.dto.VotingSessionPostDto;
 import br.com.davilnv.cooperative.infrastructure.adapters.input.rest.v1.mapper.VotingSessionGetDtoMapper;
 import br.com.davilnv.cooperative.infrastructure.adapters.input.rest.v1.mapper.VotingSessionPostDtoMapper;
@@ -19,21 +19,23 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/voting-session")
 public class VotingSessionRestAdapter {
 
-    private final VotingSessionService votingSessionService;
+    private final CreateVotingSessionUseCase createVotingSessionUseCase;
 
-    public VotingSessionRestAdapter(VotingSessionService votingSessionService) {
-        this.votingSessionService = votingSessionService;
+    public VotingSessionRestAdapter(CreateVotingSessionUseCase createVotingSessionUseCase) {
+        this.createVotingSessionUseCase = createVotingSessionUseCase;
     }
 
     @PostMapping("/open")
     public ResponseEntity<?> openVotingSession(@RequestBody VotingSessionPostDto votingSessionDto) {
         try {
-            VotingSession votingSession = votingSessionService.createVotingSession(VotingSessionPostDtoMapper.toDomain(votingSessionDto));
+            VotingSession votingSession = createVotingSessionUseCase.createVotingSession(VotingSessionPostDtoMapper.toDomain(votingSessionDto));
             return new ResponseEntity<>(VotingSessionGetDtoMapper.toDto(votingSession), HttpStatus.CREATED);
-        } catch (NotFoundAgendaException | RequiredAgendaException e) {
+        } catch (NotFoundAgendaException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (TheresAlreadyOpenVotingSessionException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        } catch (RequiredAgendaException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 }

@@ -43,13 +43,18 @@ public class AgendaPersistenceAdapter implements AgendaOutputPort {
     }
 
     @Override
-    public List<Agenda> findAll() {
-        return agendaRepository.findAll()
+    public List<Agenda> findAll() throws NotFoundAgendaException {
+        List<Agenda> agendas = agendaRepository.findAll()
                 .stream()
                 .map(agendaEntity -> {
                     Agenda agenda = AgendaMapper.toDomain(agendaEntity);
                     agenda.setVotingSession(VotingSessionMapper.toDomain(agendaEntity.getVotingSession()));
                     return agenda;
                 }).toList();
+
+        if (agendas.isEmpty()) {
+            throw new NotFoundAgendaException("Nenhuma agenda encontrada");
+        }
+        return agendas;
     }
 }

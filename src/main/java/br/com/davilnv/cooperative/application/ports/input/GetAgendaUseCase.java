@@ -10,6 +10,6 @@ public interface GetAgendaUseCase {
 
     Agenda getAgenda(UUID agendaId) throws NotFoundAgendaException;
 
-    List<Agenda> getAllAgendas();
+    List<Agenda> getAllAgendas() throws NotFoundAgendaException;
 
 }

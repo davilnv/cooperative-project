@@ -31,6 +31,10 @@ public class Agenda {
         this.endDateTime = endDateTime;
     }
 
+    public boolean canOpenVotingSession() {
+        return this.status.equals(AgendaStatus.CREATED) && votingSession == null;
+    }
+
     public UUID getId() {
         return id;
     }
@@ -85,5 +89,16 @@ public class Agenda {
 
     public void setVotingSession(VotingSession votingSession) {
         this.votingSession = votingSession;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        Agenda that = (Agenda) obj;
+
+        return id.equals(that.id);
+
     }
 }
