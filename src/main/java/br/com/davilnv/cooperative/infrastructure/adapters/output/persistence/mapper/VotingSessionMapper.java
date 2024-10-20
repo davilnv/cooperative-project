@@ -19,7 +19,7 @@ public class VotingSessionMapper {
                 votingSessionEntity.getId(),
                 votingSessionEntity.getOpenDateTime(),
                 votingSessionEntity.getCloseDateTime(),
-                AgendaMapper.toDomain(votingSessionEntity.getAgenda())
+                votingSessionEntity.getAgenda() != null ? AgendaMapper.toDomain(votingSessionEntity.getAgenda()) : null
         );
     }
 }

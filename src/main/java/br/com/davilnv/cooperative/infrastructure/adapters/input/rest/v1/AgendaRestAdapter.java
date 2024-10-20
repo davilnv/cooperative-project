@@ -1,8 +1,9 @@
 package br.com.davilnv.cooperative.infrastructure.adapters.input.rest.v1;
 
+import br.com.davilnv.cooperative.application.ports.input.CreateAgendaUseCase;
+import br.com.davilnv.cooperative.application.ports.input.GetAgendaUseCase;
 import br.com.davilnv.cooperative.domain.exception.NotFoundAgendaException;
 import br.com.davilnv.cooperative.domain.model.Agenda;
-import br.com.davilnv.cooperative.domain.service.AgendaService;
 import br.com.davilnv.cooperative.infrastructure.adapters.input.rest.v1.dto.AgendaGetDto;
 import br.com.davilnv.cooperative.infrastructure.adapters.input.rest.v1.dto.AgendaPostDto;
 import br.com.davilnv.cooperative.infrastructure.adapters.input.rest.v1.mapper.AgendaGetDtoMapper;
@@ -18,22 +19,24 @@ import java.util.UUID;
 @RequestMapping("/api/v1/agenda")
 public class AgendaRestAdapter {
 
-    private final AgendaService agendaService;
+    private final CreateAgendaUseCase createAgendaUseCase;
+    private final GetAgendaUseCase getAgendaUseCase;
 
-    public AgendaRestAdapter(AgendaService agendaService) {
-        this.agendaService = agendaService;
+    public AgendaRestAdapter(CreateAgendaUseCase createAgendaUseCase, GetAgendaUseCase getAgendaUseCase) {
+        this.createAgendaUseCase = createAgendaUseCase;
+        this.getAgendaUseCase = getAgendaUseCase;
     }
 
     @PostMapping
     public ResponseEntity<Agenda> createAgenda(@RequestBody AgendaPostDto agendaDto) {
         Agenda agenda = AgendaPostDtoMapper.toDomain(agendaDto);
-        return new ResponseEntity<>(agendaService.createAgenda(agenda), HttpStatus.CREATED);
+        return new ResponseEntity<>(createAgendaUseCase.createAgenda(agenda), HttpStatus.CREATED);
     }
 
     @GetMapping("/{agendaId}")
     public ResponseEntity<?> getAgenda(@PathVariable UUID agendaId) throws NotFoundAgendaException {
         try {
-            Agenda agenda = agendaService.getAgenda(agendaId);
+            Agenda agenda = getAgendaUseCase.getAgenda(agendaId);
             return ResponseEntity.ok(AgendaGetDtoMapper.toDto(agenda));
         } catch (NotFoundAgendaException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -42,10 +45,14 @@ public class AgendaRestAdapter {
 
     @GetMapping
     public ResponseEntity<List<AgendaGetDto>> getAllAgendas() {
-        return ResponseEntity.ok(agendaService.getAllAgendas()
-                .stream()
-                .map(AgendaGetDtoMapper::toDto)
-                .toList());
+        try {
+            return ResponseEntity.ok(getAgendaUseCase.getAllAgendas()
+                    .stream()
+                    .map(AgendaGetDtoMapper::toDto)
+                    .toList());
+        } catch (NotFoundAgendaException e) {
+            return new ResponseEntity<>(List.of(), HttpStatus.NOT_FOUND);
+        }
     }
 
 }

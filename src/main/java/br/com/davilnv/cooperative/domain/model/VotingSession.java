@@ -50,4 +50,15 @@ public class VotingSession {
     public void setAgenda(Agenda agenda) {
         this.agenda = agenda;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        VotingSession that = (VotingSession) obj;
+
+        return id.equals(that.id);
+
+    }
 }

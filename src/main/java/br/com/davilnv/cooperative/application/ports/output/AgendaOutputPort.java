@@ -12,6 +12,6 @@ public interface AgendaOutputPort {
 
     Agenda findById(UUID agendaId) throws NotFoundAgendaException;
 
-    List<Agenda> findAll();
+    List<Agenda> findAll() throws NotFoundAgendaException;
 
 }

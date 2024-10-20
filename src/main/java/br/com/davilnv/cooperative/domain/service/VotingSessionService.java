@@ -13,7 +13,6 @@ import br.com.davilnv.cooperative.domain.model.Agenda;
 import br.com.davilnv.cooperative.domain.model.VotingSession;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -34,22 +33,23 @@ public class VotingSessionService implements CreateVotingSessionUseCase, GetVoti
         }
 
         Agenda agenda = agendaOutputPort.findById(votingSession.getAgenda().getId());
-        if (agenda.getVotingSession() != null) {
-            throw new TheresAlreadyOpenVotingSessionException("Já existe uma sessão de votação para a pauta de ID: " + votingSession.getAgenda().getId());
+        if (agenda.canOpenVotingSession()) {
+
+            votingSession.setAgenda(agenda);
+
+            VotingSession votingSessionCreated = votingSessionOutputPort.save(votingSession);
+            agenda.setVotingSession(votingSessionCreated);
+            agenda.setStatus(AgendaStatus.OPEN);
+
+            votingSessionCreated.setAgenda(agendaOutputPort.save(agenda));
+            return votingSessionCreated;
         }
-        votingSession.setAgenda(agenda);
 
-        VotingSession votingSessionCreated = votingSessionOutputPort.save(votingSession);
-        agenda.setVotingSession(votingSessionCreated);
-        agenda.setStatus(AgendaStatus.OPEN);
-
-        votingSessionCreated.setAgenda(agendaOutputPort.save(agenda));
-        return votingSessionCreated;
-
+        throw new TheresAlreadyOpenVotingSessionException("Já existe uma sessão de votação para a pauta de ID: " + votingSession.getAgenda().getId());
     }
 
     @Override
-    public Optional<VotingSession> getVotingSession(UUID votingSessionId) {
+    public VotingSession getVotingSession(UUID votingSessionId) throws NotFoundVotingSessionException {
         return votingSessionOutputPort.findById(votingSessionId);
     }
 

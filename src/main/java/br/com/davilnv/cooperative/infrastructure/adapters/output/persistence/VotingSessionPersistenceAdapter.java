@@ -1,6 +1,7 @@
 package br.com.davilnv.cooperative.infrastructure.adapters.output.persistence;
 
 import br.com.davilnv.cooperative.application.ports.output.VotingSessionOutputPort;
+import br.com.davilnv.cooperative.domain.exception.NotFoundVotingSessionException;
 import br.com.davilnv.cooperative.domain.model.VotingSession;
 import br.com.davilnv.cooperative.infrastructure.adapters.output.persistence.entity.VotingSessionEntity;
 import br.com.davilnv.cooperative.infrastructure.adapters.output.persistence.mapper.VotingSessionMapper;
@@ -27,9 +28,12 @@ public class VotingSessionPersistenceAdapter implements VotingSessionOutputPort 
     }
 
     @Override
-    public Optional<VotingSession> findById(UUID votingSessionId) {
-        return votingSessionRepository.findById(votingSessionId)
-                .map(VotingSessionMapper::toDomain);
+    public VotingSession findById(UUID votingSessionId) throws NotFoundVotingSessionException {
+        Optional<VotingSessionEntity> votingSessionEntityOptional = votingSessionRepository.findById(votingSessionId);
+        if (votingSessionEntityOptional.isPresent()) {
+            return VotingSessionMapper.toDomain(votingSessionEntityOptional.get());
+        }
+        throw new NotFoundVotingSessionException("Sessão de votação não encontrada para o ID: " + votingSessionId);
     }
 
     @Override
