@@ -8,6 +8,7 @@ import br.com.davilnv.cooperative.infrastructure.adapters.input.rest.v1.dto.Agen
 import br.com.davilnv.cooperative.infrastructure.adapters.input.rest.v1.dto.AgendaPostDto;
 import br.com.davilnv.cooperative.infrastructure.adapters.input.rest.v1.mapper.AgendaGetDtoMapper;
 import br.com.davilnv.cooperative.infrastructure.adapters.input.rest.v1.mapper.AgendaPostDtoMapper;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,7 @@ public class AgendaRestAdapter {
     }
 
     @PostMapping
-    public ResponseEntity<Agenda> createAgenda(@RequestBody AgendaPostDto agendaDto) {
+    public ResponseEntity<Agenda> createAgenda(@Valid @RequestBody AgendaPostDto agendaDto) {
         Agenda agenda = AgendaPostDtoMapper.toDomain(agendaDto);
         return new ResponseEntity<>(createAgendaUseCase.createAgenda(agenda), HttpStatus.CREATED);
     }
