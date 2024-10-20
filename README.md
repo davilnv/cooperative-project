@@ -40,6 +40,7 @@ Obs: Este projeto encontra-se em funcionamento na AWS, segue o link da documenta
 - Hexagonal Architecture
 - Design Patterns
 - CI/CD - GIthub Actions, Docker e AWS
+- Testes Unitários
 
 ## Entidades
     - Pauta como "Agenda" se refere à lista de tópicos ou demandas.

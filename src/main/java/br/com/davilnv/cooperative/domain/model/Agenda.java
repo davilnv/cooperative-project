@@ -31,6 +31,10 @@ public class Agenda {
         this.endDateTime = endDateTime;
     }
 
+    public boolean canOpenVotingSession() {
+        return this.status.equals(AgendaStatus.CREATED) && votingSession == null;
+    }
+
     public UUID getId() {
         return id;
     }
