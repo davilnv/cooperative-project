@@ -1,6 +1,7 @@
 package br.com.davilnv.cooperative.infrastructure.adapters.input.rest.v1.mapper;
 
 import br.com.davilnv.cooperative.domain.model.Member;
+import br.com.davilnv.cooperative.domain.utils.TimeUtils;
 import br.com.davilnv.cooperative.infrastructure.adapters.input.rest.v1.dto.MemberPostDto;
 
 public class MemberPostDtoMapper {
@@ -9,7 +10,7 @@ public class MemberPostDtoMapper {
                 null,
                 memberPostDto.cpf(),
                 memberPostDto.memberName(),
-                memberPostDto.birthDate()
+                TimeUtils.getLocalDateFromString(memberPostDto.birthDate())
         );
     }
 }

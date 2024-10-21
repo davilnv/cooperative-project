@@ -12,8 +12,12 @@ public class AgendaPostDtoMapper {
                 agendaPostDto.title(),
                 agendaPostDto.description(),
                 AgendaStatus.CREATED,
-                agendaPostDto.startDateTime() != null ? agendaPostDto.startDateTime() : TimeUtils.getDateTimeNow(),
-                agendaPostDto.endDateTime()
+                agendaPostDto.startDateTime() != null
+                        ? TimeUtils.getLocalDateTimeFromString(agendaPostDto.startDateTime())
+                        : TimeUtils.getDateTimeNow(),
+                agendaPostDto.endDateTime() != null
+                        ? TimeUtils.getLocalDateTimeFromString(agendaPostDto.endDateTime())
+                        : null
         );
     }
 }
