@@ -3,9 +3,7 @@ package br.com.davilnv.cooperative.domain.model;
 import br.com.davilnv.cooperative.domain.utils.TimeUtils;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class VotingSession {
     private UUID id;
@@ -16,20 +14,31 @@ public class VotingSession {
     public VotingSession() {
         this.openDateTime = TimeUtils.getDateTimeNow();
         this.closeDateTime = TimeUtils.getDateTimeNowPlusOneMinute();
-        votes = new ArrayList<>();
+        this.votes = new ArrayList<>();
     }
 
     public VotingSession(LocalDateTime closeDateTime) {
         this.openDateTime = TimeUtils.getDateTimeNow();
         this.closeDateTime = closeDateTime != null ? closeDateTime : TimeUtils.getDateTimeNowPlusOneMinute();
-        votes = new ArrayList<>();
+        this.votes = new ArrayList<>();
     }
 
     public VotingSession(UUID id, LocalDateTime openDateTime, LocalDateTime closeDateTime) {
         this.id = id;
         this.openDateTime = openDateTime != null ? openDateTime : TimeUtils.getDateTimeNow();
         this.closeDateTime = closeDateTime != null ? closeDateTime : TimeUtils.getDateTimeNowPlusOneMinute();
-        votes = new ArrayList<>();
+        this.votes = new ArrayList<>();
+    }
+
+    public void addVote(Vote vote) {
+        if (votes == null) {
+            votes = new ArrayList<>();
+        }
+
+        List<Vote> newVotes = new ArrayList<>(votes);
+        newVotes.add(vote);
+
+        setVotes(newVotes);
     }
 
     public UUID getId() {

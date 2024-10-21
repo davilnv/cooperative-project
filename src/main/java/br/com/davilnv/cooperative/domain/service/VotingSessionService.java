@@ -81,6 +81,8 @@ public class VotingSessionService implements CreateVotingSessionUseCase, GetVoti
 
             //Verifica se a pauta e a sessão estão abertas
             if (agenda.getStatus().equals(AgendaStatus.OPEN)
+                    && votingSession != null
+                    && votingSession.getCloseDateTime() != null
                     && votingSession.getCloseDateTime().isAfter(TimeUtils.getDateTimeNow())
             ) {
                 // Carrega todas as informações do associado
@@ -96,12 +98,8 @@ public class VotingSessionService implements CreateVotingSessionUseCase, GetVoti
                 vote.setMember(member);
                 Vote savedVote = votingSessionOutputPort.saveVote(vote);
 
-                // Atualiza a pauta e o associado ao voto
-                savedVote.setAgenda(agenda);
-                savedVote.setMember(member);
-
                 // Adiciona o voto na sessão de votação
-                votingSession.getVotes().add(savedVote);
+                votingSession.addVote(savedVote);
                 votingSessionOutputPort.save(votingSession);
 
                 // Soma o voto na pauta

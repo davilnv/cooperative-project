@@ -4,8 +4,10 @@ import br.com.davilnv.cooperative.application.ports.output.VotingSessionOutputPo
 import br.com.davilnv.cooperative.domain.exception.NotFoundVotingSessionException;
 import br.com.davilnv.cooperative.domain.model.Vote;
 import br.com.davilnv.cooperative.domain.model.VotingSession;
+import br.com.davilnv.cooperative.infrastructure.adapters.output.persistence.entity.AgendaEntity;
 import br.com.davilnv.cooperative.infrastructure.adapters.output.persistence.entity.VotingSessionEntity;
 import br.com.davilnv.cooperative.infrastructure.adapters.output.persistence.entity.VotingSessionVoteEntity;
+import br.com.davilnv.cooperative.infrastructure.adapters.output.persistence.mapper.AgendaMapper;
 import br.com.davilnv.cooperative.infrastructure.adapters.output.persistence.mapper.VotingSessionMapper;
 import br.com.davilnv.cooperative.infrastructure.adapters.output.persistence.mapper.VotingSessionVoteEntityMapper;
 import br.com.davilnv.cooperative.infrastructure.adapters.output.persistence.repository.VotingSessionRepository;
@@ -43,8 +45,9 @@ public class VotingSessionPersistenceAdapter implements VotingSessionOutputPort 
 
     @Override
     public Vote saveVote(Vote vote) {
+        AgendaEntity agendaEntity = AgendaMapper.toEntity(vote.getAgenda());
         VotingSessionVoteEntity votingSessionVoteEntity = VotingSessionVoteEntityMapper.toEntity(vote);
-        return VotingSessionVoteEntityMapper.toDomain(votingSessionVoteRepository.save(votingSessionVoteEntity));
+        return VotingSessionVoteEntityMapper.toDomain(votingSessionVoteRepository.save(votingSessionVoteEntity), agendaEntity);
     }
 
     @Override
