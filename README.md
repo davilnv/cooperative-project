@@ -27,7 +27,7 @@ O projeto foi desenvolvido com Java 17 e Spring Boot. Para rodar o projeto, bast
 ```bash
 ./mvnw spring-boot:run
 ```
-Obs: Este projeto encontra-se em funcionamento na AWS, segue o link da documentação da API: [Documentação da API](ec2-3-132-215-19.us-east-2.compute.amazonaws.com:8181/swagger-ui/index.html)
+Obs: Este projeto encontra-se em funcionamento na AWS, segue o link da documentação da API: [Documentação da API](http://ec2-3-132-215-19.us-east-2.compute.amazonaws.com:8181/swagger-ui/index.html)
 
 ## Diagrama do Banco de Dados
 [Diagrama DBML](https://dbdiagram.io/d/Cooperative-Project-6712a5d697a66db9a37f1cf3)
