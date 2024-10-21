@@ -33,6 +33,7 @@ public class AgendaMapper {
                 agendaEntity.getEndDateTime()
         );
 
+        agenda.setVotingSession(VotingSessionMapper.toDomain(agendaEntity.getVotingSession()));
         agenda.setVotesYes(agendaEntity.getVotesYes());
         agenda.setVotesNo(agendaEntity.getVotesNo());
         return agenda;
