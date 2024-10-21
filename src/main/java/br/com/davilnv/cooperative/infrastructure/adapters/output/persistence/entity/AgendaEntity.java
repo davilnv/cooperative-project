@@ -33,6 +33,12 @@ public class AgendaEntity {
     @JoinColumn(name = "VOTING_SESSION_ID", referencedColumnName = "ID")
     private VotingSessionEntity votingSession;
 
+    @Column(name = "VOTES_YES")
+    private int votesYes;
+
+    @Column(name = "VOTES_NO")
+    private int votesNo;
+
     public AgendaEntity() {
     }
 
@@ -100,5 +106,21 @@ public class AgendaEntity {
 
     public void setVotingSession(VotingSessionEntity votingSession) {
         this.votingSession = votingSession;
+    }
+
+    public int getVotesYes() {
+        return votesYes;
+    }
+
+    public void setVotesYes(int votesYes) {
+        this.votesYes = votesYes;
+    }
+
+    public int getVotesNo() {
+        return votesNo;
+    }
+
+    public void setVotesNo(int votesNo) {
+        this.votesNo = votesNo;
     }
 }

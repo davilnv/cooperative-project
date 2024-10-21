@@ -5,13 +5,13 @@ import br.com.davilnv.cooperative.domain.enums.AgendaStatus;
 import br.com.davilnv.cooperative.domain.exception.NotFoundAgendaException;
 import br.com.davilnv.cooperative.domain.model.Agenda;
 import br.com.davilnv.cooperative.domain.model.VotingSession;
+import br.com.davilnv.cooperative.domain.utils.TimeUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,7 +43,7 @@ public class AgendaServiceTest {
                 "Test Agenda",
                 "Test Description",
                 AgendaStatus.CREATED,
-                LocalDateTime.now(),
+                TimeUtils.getDateTimeNow(),
                 null
         );
     }
@@ -68,7 +68,7 @@ public class AgendaServiceTest {
     void createAgenda_ShouldReturnSavedAgenda_WhenVotingSessionIsNotNull() {
         // Arrange
         UUID votingSessionId = UUID.randomUUID();
-        VotingSession votingSession = new VotingSession(votingSessionId, LocalDateTime.now(), null, agenda);
+        VotingSession votingSession = new VotingSession(votingSessionId, TimeUtils.getDateTimeNow(), null);
         agenda.setVotingSession(votingSession);
         when(agendaOutputPort.save(agenda)).thenReturn(agenda);
 
@@ -78,7 +78,6 @@ public class AgendaServiceTest {
         // Assert
         assertNotNull(savedAgenda);
         assertNotNull(savedAgenda.getVotingSession());
-        assertNotNull(savedAgenda.getVotingSession().getAgenda());
         assertEquals(agenda.getId(), savedAgenda.getId());
         assertEquals(agenda.getTitle(), savedAgenda.getTitle());
         assertEquals(votingSessionId, savedAgenda.getVotingSession().getId());

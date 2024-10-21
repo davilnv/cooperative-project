@@ -1,22 +1,35 @@
 package br.com.davilnv.cooperative.domain.model;
 
+import br.com.davilnv.cooperative.domain.utils.TimeUtils;
+
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class VotingSession {
     private UUID id;
     private LocalDateTime openDateTime;
     private LocalDateTime closeDateTime;
-    private Agenda agenda;
+    private List<Vote> votes;
 
     public VotingSession() {
+        this.openDateTime = TimeUtils.getDateTimeNow();
+        this.closeDateTime = TimeUtils.getDateTimeNowPlusOneMinute();
+        votes = new ArrayList<>();
     }
 
-    public VotingSession(UUID id, LocalDateTime openDateTime, LocalDateTime closeDateTime, Agenda agenda) {
+    public VotingSession(LocalDateTime closeDateTime) {
+        this.openDateTime = TimeUtils.getDateTimeNow();
+        this.closeDateTime = closeDateTime != null ? closeDateTime : TimeUtils.getDateTimeNowPlusOneMinute();
+        votes = new ArrayList<>();
+    }
+
+    public VotingSession(UUID id, LocalDateTime openDateTime, LocalDateTime closeDateTime) {
         this.id = id;
-        this.openDateTime = openDateTime;
-        this.closeDateTime = closeDateTime;
-        this.agenda = agenda;
+        this.openDateTime = openDateTime != null ? openDateTime : TimeUtils.getDateTimeNow();
+        this.closeDateTime = closeDateTime != null ? closeDateTime : TimeUtils.getDateTimeNowPlusOneMinute();
+        votes = new ArrayList<>();
     }
 
     public UUID getId() {
@@ -43,12 +56,12 @@ public class VotingSession {
         this.closeDateTime = closeDateTime;
     }
 
-    public Agenda getAgenda() {
-        return agenda;
+    public List<Vote> getVotes() {
+        return votes == null ? new ArrayList<>() : votes;
     }
 
-    public void setAgenda(Agenda agenda) {
-        this.agenda = agenda;
+    public void setVotes(List<Vote> votes) {
+        this.votes = votes;
     }
 
     @Override

@@ -1,12 +1,14 @@
 package br.com.davilnv.cooperative.infrastructure.adapters.input.rest.v1;
 
 import br.com.davilnv.cooperative.application.ports.input.CreateVotingSessionUseCase;
-import br.com.davilnv.cooperative.domain.enums.AgendaStatus;
+import br.com.davilnv.cooperative.application.ports.input.PerformVoteUseCase;
+import br.com.davilnv.cooperative.application.ports.output.MemberOutputPort;
+import br.com.davilnv.cooperative.application.ports.output.VotingSessionOutputPort;
 import br.com.davilnv.cooperative.domain.exception.NotFoundAgendaException;
 import br.com.davilnv.cooperative.domain.exception.RequiredAgendaException;
 import br.com.davilnv.cooperative.domain.exception.TheresAlreadyOpenVotingSessionException;
-import br.com.davilnv.cooperative.domain.model.Agenda;
 import br.com.davilnv.cooperative.domain.model.VotingSession;
+import br.com.davilnv.cooperative.domain.utils.TimeUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.mockito.Mockito.*;
@@ -32,35 +35,39 @@ public class VotingSessionRestAdapterTest extends BaseRestTest {
     @MockBean
     private CreateVotingSessionUseCase createVotingSessionUseCase;
 
+    @MockBean
+    private PerformVoteUseCase performVoteUseCase;
+
+    @MockBean
+    private VotingSessionOutputPort votingSessionOutputPort;
+
+    @MockBean
+    private MemberOutputPort memberOutputPort;
+
     private VotingSession votingSession;
-    private Agenda agenda;
+    private final String dateTime = "22/10/2024 22:22:00";
+    private final UUID agendaId = UUID.randomUUID();
 
     @BeforeEach
     public void setUp() throws IOException {
         baseEndpoint = API_BASE_V1 + "voting-session";
-        agenda = new Agenda(
-                UUID.fromString("be038a4b-f0b0-4bd7-8ea0-b36e93c9d917"),
-                "Teste",
-                "Teste Descrição",
-                AgendaStatus.CREATED,
-                LocalDateTime.now(),
-                null
-        );
 
         votingSession = new VotingSession(
                 UUID.randomUUID(),
-                LocalDateTime.now(),
-                LocalDateTime.now().plusMinutes(1),
-                agenda
+                TimeUtils.getDateTimeNow(),
+                TimeUtils.getDateTimeNowPlusOneMinute()
         );
+    }
 
-        json = getJson("voting-session");
+    private String getJsonString(UUID agendaId, String closeDateTime) {
+        return "{\"agendaId\": \"" + agendaId + "\", \"closeDateTime\": \"" + closeDateTime + "\"}";
     }
 
     @Test
     void openVotingSession_ShouldReturnCreated_WhenVotingSessionIsValid() throws Exception {
         // Arrange
-        when(createVotingSessionUseCase.createVotingSession(any(VotingSession.class))).thenReturn(votingSession);
+        String json = getJsonString(agendaId, dateTime);
+        when(createVotingSessionUseCase.createVotingSession(agendaId, TimeUtils.getLocalDateTimeFromString(dateTime))).thenReturn(votingSession);
 
         // Act & Assert
         mockMvc.perform(post(baseEndpoint + "/open")
@@ -76,9 +83,9 @@ public class VotingSessionRestAdapterTest extends BaseRestTest {
     void openVotingSession_ShouldThrowRequiredAgendaException_WhenAgendaIsNull() throws Exception {
         // Arrange
         String errorMessage = "O id da pauta é obrigatório";
-        when(createVotingSessionUseCase.createVotingSession(any(VotingSession.class)))
+        when(createVotingSessionUseCase.createVotingSession(null, TimeUtils.getLocalDateTimeFromString(dateTime)))
                 .thenThrow(new RequiredAgendaException(errorMessage));
-        json = getJson("null-voting-session");
+        String json = "{\"agendaId\": null}";
 
         // Act & Assert
         mockMvc.perform(post(baseEndpoint + "/open")
@@ -93,9 +100,9 @@ public class VotingSessionRestAdapterTest extends BaseRestTest {
     void openVotingSession_ShouldThrowNotFoundAgendaException_WhenAgendaNonExistent() throws Exception {
         // Arrange
         String errorMessage = "Agenda não encontrada para o ID: ";
-        when(createVotingSessionUseCase.createVotingSession(any(VotingSession.class)))
+        String json = getJsonString(agendaId, dateTime);
+        when(createVotingSessionUseCase.createVotingSession(agendaId, TimeUtils.getLocalDateTimeFromString(dateTime)))
                 .thenThrow(new NotFoundAgendaException(errorMessage));
-        json = getJson("non-existent-voting-session");
 
         // Act & Assert
         String response = mockMvc.perform(post(baseEndpoint + "/open")
@@ -111,9 +118,9 @@ public class VotingSessionRestAdapterTest extends BaseRestTest {
     void openVotingSession_ShouldThrowTheresAlreadyOpenVotingSessionException_WhenVotingSessionAlreadyOpen() throws Exception {
         // Arrange
         String errorMessage = "Já existe uma sessão de votação para a pauta de ID: ";
-        when(createVotingSessionUseCase.createVotingSession(any(VotingSession.class)))
+        String json = getJsonString(agendaId, dateTime);
+        when(createVotingSessionUseCase.createVotingSession(agendaId, TimeUtils.getLocalDateTimeFromString(dateTime)))
                 .thenThrow(new TheresAlreadyOpenVotingSessionException(errorMessage));
-        json = getJson("voting-session");
 
         // Act & Assert
         String response = mockMvc.perform(post(baseEndpoint + "/open")
@@ -123,6 +130,8 @@ public class VotingSessionRestAdapterTest extends BaseRestTest {
                 .andReturn().getResponse().getContentAsString();
 
         assertTrue(response.contains(errorMessage));
+
+        verify(createVotingSessionUseCase).createVotingSession(any(UUID.class), any(LocalDateTime.class));
     }
 
 }

@@ -35,7 +35,7 @@ public class AgendaRestAdapter {
     }
 
     @GetMapping("/{agendaId}")
-    public ResponseEntity<?> getAgenda(@PathVariable UUID agendaId) throws NotFoundAgendaException {
+    public ResponseEntity<?> getAgenda(@PathVariable UUID agendaId) {
         try {
             Agenda agenda = getAgendaUseCase.getAgenda(agendaId);
             return ResponseEntity.ok(AgendaGetDtoMapper.toDto(agenda));
