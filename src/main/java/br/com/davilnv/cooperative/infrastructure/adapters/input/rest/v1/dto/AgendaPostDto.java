@@ -1,10 +1,9 @@
 package br.com.davilnv.cooperative.infrastructure.adapters.input.rest.v1.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import br.com.davilnv.cooperative.domain.utils.StaticsUtils;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-
-import java.time.LocalDateTime;
 
 public record AgendaPostDto(
 
@@ -15,10 +14,10 @@ public record AgendaPostDto(
         @Size(max = 255, message = "A descrição da pauta deve ter no máximo 255 caracteres")
         String description,
 
-        @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
-        LocalDateTime startDateTime,
+        @Pattern(regexp = StaticsUtils.DATE_TIME_PATTERN, message = "A data de início da pauta deve estar no formato dd/MM/yyyy HH:mm:ss")
+        String startDateTime,
 
-        @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
-        LocalDateTime endDateTime
+        @Pattern(regexp = StaticsUtils.DATE_TIME_PATTERN, message = "A data de início da pauta deve estar no formato dd/MM/yyyy HH:mm:ss")
+        String endDateTime
 ) {
 }

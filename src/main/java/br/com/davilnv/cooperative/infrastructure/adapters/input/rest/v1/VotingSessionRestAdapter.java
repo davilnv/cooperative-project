@@ -5,6 +5,7 @@ import br.com.davilnv.cooperative.application.ports.input.PerformVoteUseCase;
 import br.com.davilnv.cooperative.domain.exception.*;
 import br.com.davilnv.cooperative.domain.model.Vote;
 import br.com.davilnv.cooperative.domain.model.VotingSession;
+import br.com.davilnv.cooperative.domain.utils.TimeUtils;
 import br.com.davilnv.cooperative.infrastructure.adapters.input.rest.v1.dto.MemberVotePostDto;
 import br.com.davilnv.cooperative.infrastructure.adapters.input.rest.v1.dto.VotingSessionPostDto;
 import br.com.davilnv.cooperative.infrastructure.adapters.input.rest.v1.mapper.MemberVotePostDtoMapper;
@@ -33,7 +34,7 @@ public class VotingSessionRestAdapter {
     @PostMapping("/open")
     public ResponseEntity<?> openVotingSession(@Valid @RequestBody VotingSessionPostDto votingSessionDto) {
         try {
-            VotingSession votingSession = createVotingSessionUseCase.createVotingSession(votingSessionDto.agendaId(), votingSessionDto.closeDateTime());
+            VotingSession votingSession = createVotingSessionUseCase.createVotingSession(votingSessionDto.agendaId(), TimeUtils.getLocalDateTimeFromString(votingSessionDto.closeDateTime()));
             return new ResponseEntity<>(VotingSessionGetDtoMapper.toDto(votingSession), HttpStatus.CREATED);
         } catch (NotFoundAgendaException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);

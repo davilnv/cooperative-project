@@ -1,11 +1,9 @@
 package br.com.davilnv.cooperative.infrastructure.adapters.input.rest.v1.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import br.com.davilnv.cooperative.domain.utils.StaticsUtils;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-
-import java.time.LocalDate;
 
 public record MemberPostDto(
 
@@ -18,8 +16,8 @@ public record MemberPostDto(
         @Size(min = 1, max = 150, message = "O nome do associado deve ter no máximo 150 caracteres")
         String memberName,
 
-        @JsonFormat(pattern = "dd/MM/yyyy")
-        LocalDate birthDate
+        @Pattern(regexp = StaticsUtils.DATE_PATTERN, message = "A data de nascimento do associado deve estar no formato dd/MM/yyyy")
+        String birthDate
 
 ) {
 }
