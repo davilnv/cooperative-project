@@ -13,7 +13,9 @@ public class AgendaGetDtoMapper {
                 agenda.getStartDateTime(),
                 agenda.getEndDateTime(),
                 agenda.getVotingSession() != null
-                        ? VotingSessionGetDtoMapper.toDto(agenda.getVotingSession()) : null
+                        ? VotingSessionGetDtoMapper.toDto(agenda.getVotingSession()) : null,
+                agenda.getVotesYes(),
+                agenda.getVotesNo()
         );
     }
 }

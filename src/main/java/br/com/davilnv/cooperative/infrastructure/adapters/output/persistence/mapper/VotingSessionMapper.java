@@ -9,8 +9,7 @@ public class VotingSessionMapper {
         return new VotingSessionEntity(
                 votingSession.getId(),
                 votingSession.getOpenDateTime(),
-                votingSession.getCloseDateTime(),
-                AgendaMapper.toEntity(votingSession.getAgenda())
+                votingSession.getCloseDateTime()
         );
     }
 
@@ -18,8 +17,7 @@ public class VotingSessionMapper {
         return votingSessionEntity == null ? null : new VotingSession(
                 votingSessionEntity.getId(),
                 votingSessionEntity.getOpenDateTime(),
-                votingSessionEntity.getCloseDateTime(),
-                votingSessionEntity.getAgenda() != null ? AgendaMapper.toDomain(votingSessionEntity.getAgenda()) : null
+                votingSessionEntity.getCloseDateTime()
         );
     }
 }

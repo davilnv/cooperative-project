@@ -9,14 +9,13 @@ import br.com.davilnv.cooperative.domain.exception.RequiredAgendaException;
 import br.com.davilnv.cooperative.domain.exception.TheresAlreadyOpenVotingSessionException;
 import br.com.davilnv.cooperative.domain.model.Agenda;
 import br.com.davilnv.cooperative.domain.model.VotingSession;
+import br.com.davilnv.cooperative.domain.utils.TimeUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -49,70 +48,53 @@ public class VotingSessionServiceTest {
                 "Test Agenda",
                 "Test Description",
                 AgendaStatus.CREATED,
-                LocalDateTime.now(),
+                TimeUtils.getDateTimeNow(),
                 null
         );
 
         votingSession = new VotingSession(
                 votingSessionId,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusMinutes(1),
-                agenda
+                TimeUtils.getDateTimeNow(),
+                TimeUtils.getDateTimeNowPlusOneMinute()
         );
 
         agenda.setVotingSession(votingSession);
     }
 
     @Test
-    void createVotingSession_ShouldThrowRequiredAgendaException_WhenAgendaIsNull() {
-        // Arrange
-        votingSession.setAgenda(null);
-
-        /// Act & Assert
-        assertThrows(RequiredAgendaException.class, () -> votingSessionService.createVotingSession(votingSession));
-
-    }
-
-    @Test
     void createVotingSession_ShouldThrowRequiredAgendaException_WhenAgendaIdIsNull() {
-        // Arrange
-        votingSession.getAgenda().setId(null);
-
         /// Act & Assert
-        assertThrows(RequiredAgendaException.class, () -> votingSessionService.createVotingSession(votingSession));
-
+        assertThrows(RequiredAgendaException.class, () -> votingSessionService.createVotingSession(null, null));
     }
 
     @Test
     void createVotingSession_ShouldReturnSavedVotingSession() throws NotFoundAgendaException, RequiredAgendaException, TheresAlreadyOpenVotingSessionException {
         // Arrange
         agenda.setVotingSession(null);
-        when(votingSessionOutputPort.save(votingSession)).thenReturn(votingSession);
         when(agendaOutputPort.findById(agendaId)).thenReturn(agenda);
+        when(votingSessionOutputPort.save(any(VotingSession.class))).thenReturn(votingSession);
         when(agendaOutputPort.save(agenda)).thenReturn(agenda);
 
         // Act
-        VotingSession savedVotingSession = votingSessionService.createVotingSession(votingSession);
+        VotingSession savedVotingSession = votingSessionService.createVotingSession(agendaId, votingSession.getCloseDateTime());
 
         // Assert
         assertNotNull(savedVotingSession);
-        assertNotNull(savedVotingSession.getAgenda());
         assertEquals(votingSession.getId(), savedVotingSession.getId());
         assertEquals(votingSession.getOpenDateTime(), savedVotingSession.getOpenDateTime());
-        assertEquals(savedVotingSession.getAgenda().getStatus(), AgendaStatus.OPEN);
 
-        verify(votingSessionOutputPort, times(1)).save(votingSession);
         verify(agendaOutputPort, times(1)).findById(agendaId);
+        verify(votingSessionOutputPort, times(1)).save(any(VotingSession.class));
         verify(agendaOutputPort, times(1)).save(agenda);
     }
 
     @Test
-    void createVotingSession_ShouldThrowRTheresAlreadyOpenVotingSessionException_WhenVotingSessionAlreadyExists() throws NotFoundAgendaException {
+    void createVotingSession_ShouldThrowTheresAlreadyOpenVotingSessionException_WhenVotingSessionAlreadyExists() throws NotFoundAgendaException {
         // Arrange
         when(agendaOutputPort.findById(agendaId)).thenReturn(agenda);
 
         // Act & Assert
-        assertThrows(TheresAlreadyOpenVotingSessionException.class, () -> votingSessionService.createVotingSession(votingSession));
+        assertThrows(TheresAlreadyOpenVotingSessionException.class, () -> votingSessionService.createVotingSession(agendaId, votingSession.getCloseDateTime()));
 
         verify(agendaOutputPort, times(1)).findById(agendaId);
     }

@@ -5,10 +5,11 @@ import br.com.davilnv.cooperative.infrastructure.adapters.input.rest.v1.dto.Voti
 
 public class VotingSessionGetDtoMapper {
     public static VotingSessionGetDto toDto(VotingSession votingSession) {
-        return new VotingSessionGetDto(
+        return votingSession == null ? null : new VotingSessionGetDto(
                 votingSession.getId(),
                 votingSession.getOpenDateTime(),
-                votingSession.getCloseDateTime()
+                votingSession.getCloseDateTime(),
+                votingSession.getVotes().stream().map(VoteGetDtoMapper::toDto).toList()
         );
     }
 }

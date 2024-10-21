@@ -3,12 +3,12 @@ package br.com.davilnv.cooperative.infrastructure.adapters.output.persistence;
 import br.com.davilnv.cooperative.domain.enums.AgendaStatus;
 import br.com.davilnv.cooperative.domain.exception.NotFoundAgendaException;
 import br.com.davilnv.cooperative.domain.model.Agenda;
+import br.com.davilnv.cooperative.domain.utils.TimeUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,7 +29,7 @@ public class AgendaPersistenceAdapterTest {
                 "Teste",
                 "Teste de descrição",
                 AgendaStatus.CREATED,
-                LocalDateTime.now(),
+                TimeUtils.getDateTimeNow(),
                 null
         );
 
@@ -51,7 +51,7 @@ public class AgendaPersistenceAdapterTest {
                 "Teste2",
                 "Teste de descrição",
                 AgendaStatus.CREATED,
-                LocalDateTime.now(),
+                TimeUtils.getDateTimeNow(),
                 null
         );
 
@@ -74,7 +74,7 @@ public class AgendaPersistenceAdapterTest {
                 "Teste2",
                 "Teste de descrição",
                 AgendaStatus.CREATED,
-                LocalDateTime.now(),
+                TimeUtils.getDateTimeNow(),
                 null
         );
 
@@ -93,7 +93,7 @@ public class AgendaPersistenceAdapterTest {
                 "Teste3",
                 "Teste de descrição",
                 AgendaStatus.CREATED,
-                LocalDateTime.now(),
+                TimeUtils.getDateTimeNow(),
                 null
         );
 
@@ -102,7 +102,7 @@ public class AgendaPersistenceAdapterTest {
                 "Teste4",
                 "Teste de descrição",
                 AgendaStatus.CREATED,
-                LocalDateTime.now(),
+                TimeUtils.getDateTimeNow(),
                 null
         );
 

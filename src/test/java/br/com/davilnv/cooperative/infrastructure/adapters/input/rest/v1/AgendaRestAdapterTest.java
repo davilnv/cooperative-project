@@ -5,6 +5,7 @@ import br.com.davilnv.cooperative.application.ports.input.GetAgendaUseCase;
 import br.com.davilnv.cooperative.domain.enums.AgendaStatus;
 import br.com.davilnv.cooperative.domain.exception.NotFoundAgendaException;
 import br.com.davilnv.cooperative.domain.model.Agenda;
+import br.com.davilnv.cooperative.domain.utils.TimeUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.mockito.Mockito.*;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @WebMvcTest(AgendaRestAdapter.class)
@@ -43,7 +43,7 @@ public class AgendaRestAdapterTest extends BaseRestTest {
                 "Teste",
                 "Teste Descrição",
                 AgendaStatus.CREATED,
-                LocalDateTime.now(),
+                TimeUtils.getDateTimeNow(),
                 null
         );
 

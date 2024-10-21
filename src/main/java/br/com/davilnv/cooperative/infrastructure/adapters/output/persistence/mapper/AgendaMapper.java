@@ -8,7 +8,7 @@ import br.com.davilnv.cooperative.infrastructure.adapters.output.persistence.enu
 public class AgendaMapper {
 
     public static AgendaEntity toEntity(Agenda agenda) {
-        return new AgendaEntity(
+        AgendaEntity agendaEntity = new AgendaEntity(
                 agenda.getId(),
                 agenda.getTitle(),
                 agenda.getDescription(),
@@ -17,10 +17,14 @@ public class AgendaMapper {
                 agenda.getEndDateTime(),
                 agenda.getVotingSession() != null ? VotingSessionMapper.toEntity(agenda.getVotingSession()) : null
         );
+
+        agendaEntity.setVotesYes(agenda.getVotesYes());
+        agendaEntity.setVotesNo(agenda.getVotesNo());
+        return agendaEntity;
     }
 
     public static Agenda toDomain(AgendaEntity agendaEntity) {
-        return new Agenda(
+        Agenda agenda = new Agenda(
                 agendaEntity.getId(),
                 agendaEntity.getTitle(),
                 agendaEntity.getDescription(),
@@ -28,5 +32,10 @@ public class AgendaMapper {
                 agendaEntity.getStartDateTime(),
                 agendaEntity.getEndDateTime()
         );
+
+        agenda.setVotingSession(VotingSessionMapper.toDomain(agendaEntity.getVotingSession()));
+        agenda.setVotesYes(agendaEntity.getVotesYes());
+        agenda.setVotesNo(agendaEntity.getVotesNo());
+        return agenda;
     }
 }
