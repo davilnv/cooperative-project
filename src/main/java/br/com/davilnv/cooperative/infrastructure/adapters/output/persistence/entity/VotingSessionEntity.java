@@ -3,6 +3,8 @@ package br.com.davilnv.cooperative.infrastructure.adapters.output.persistence.en
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -18,18 +20,17 @@ public class VotingSessionEntity {
     @Column(name = "CLOSE_DATE_TIME")
     private LocalDateTime closeDateTime;
 
-    @OneToOne(mappedBy = "votingSession")
-    private AgendaEntity agenda;
+    @OneToMany(mappedBy = "id.votingSession", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<VotingSessionVoteEntity> votes = new ArrayList<>();
 
     public VotingSessionEntity(
     ) {
     }
 
-    public VotingSessionEntity(UUID id, LocalDateTime openDateTime, LocalDateTime closeDateTime, AgendaEntity agenda) {
+    public VotingSessionEntity(UUID id, LocalDateTime openDateTime, LocalDateTime closeDateTime) {
         this.id = id;
         this.openDateTime = openDateTime;
         this.closeDateTime = closeDateTime;
-        this.agenda = agenda;
     }
 
     public UUID getId() {
@@ -56,11 +57,11 @@ public class VotingSessionEntity {
         this.closeDateTime = closeDateTime;
     }
 
-    public AgendaEntity getAgenda() {
-        return agenda;
+    public List<VotingSessionVoteEntity> getVotes() {
+        return votes;
     }
 
-    public void setAgenda(AgendaEntity agenda) {
-        this.agenda = agenda;
+    public void setVotes(List<VotingSessionVoteEntity> votes) {
+        this.votes = votes;
     }
 }

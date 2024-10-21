@@ -141,4 +141,4 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             cd /home/ec2-user
-            java -jar cooperative-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
+            java -jar target/cooperative-0.0.1-SNAPSHOT.jar > app.log 2>&1 &

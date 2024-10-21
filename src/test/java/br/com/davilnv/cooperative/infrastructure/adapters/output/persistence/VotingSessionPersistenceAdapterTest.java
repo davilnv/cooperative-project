@@ -1,15 +1,13 @@
 package br.com.davilnv.cooperative.infrastructure.adapters.output.persistence;
 
-import br.com.davilnv.cooperative.domain.enums.AgendaStatus;
 import br.com.davilnv.cooperative.domain.exception.NotFoundVotingSessionException;
-import br.com.davilnv.cooperative.domain.model.Agenda;
 import br.com.davilnv.cooperative.domain.model.VotingSession;
+import br.com.davilnv.cooperative.domain.utils.TimeUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,22 +26,10 @@ public class VotingSessionPersistenceAdapterTest {
     @Test
     void save_ShouldPersistVotingSession_WhenValid() {
         // Arrange
-        Agenda agenda = new Agenda(
-                null,
-                "Test Agenda",
-                "Test Description",
-                AgendaStatus.CREATED,
-                LocalDateTime.now(),
-                null
-        );
-
-        Agenda savedAgenda = agendaPersistenceAdapter.save(agenda);
-
         VotingSession votingSession = new VotingSession(
                 null,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusMinutes(1),
-                savedAgenda
+                TimeUtils.getDateTimeNow(),
+                TimeUtils.getDateTimeNowPlusOneMinute()
         );
 
         // Act
@@ -58,22 +44,10 @@ public class VotingSessionPersistenceAdapterTest {
     @Test
     void findById_ShouldReturnVotingSession_WhenValid() throws NotFoundVotingSessionException {
         // Arrange
-        Agenda agenda = new Agenda(
-                null,
-                "Test Agenda2",
-                "Test Description",
-                AgendaStatus.CREATED,
-                LocalDateTime.now(),
-                null
-        );
-
-        Agenda savedAgenda = agendaPersistenceAdapter.save(agenda);
-
         VotingSession votingSession = new VotingSession(
                 null,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusMinutes(1),
-                savedAgenda
+                TimeUtils.getDateTimeNow(),
+                TimeUtils.getDateTimeNowPlusOneMinute()
         );
 
         VotingSession savedVotingSession = votingSessionPersistenceAdapter.save(votingSession);
@@ -89,22 +63,10 @@ public class VotingSessionPersistenceAdapterTest {
     @Test
     void findById_ShouldThrowNotFoundVotingSessionException_WhenNotValid() {
         // Arrange
-        Agenda agenda = new Agenda(
-                null,
-                "Test Agenda2",
-                "Test Description",
-                AgendaStatus.CREATED,
-                LocalDateTime.now(),
-                null
-        );
-
-        Agenda savedAgenda = agendaPersistenceAdapter.save(agenda);
-
         VotingSession votingSession = new VotingSession(
                 null,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusMinutes(1),
-                savedAgenda
+                TimeUtils.getDateTimeNow(),
+                TimeUtils.getDateTimeNowPlusOneMinute()
         );
 
         votingSessionPersistenceAdapter.save(votingSession);
@@ -117,40 +79,17 @@ public class VotingSessionPersistenceAdapterTest {
     @Test
     void findAll_ShouldReturnAllVotingSessions_WhenValid() {
         // Arrange
-        Agenda agenda1 = new Agenda(
-                null,
-                "Test Agenda3",
-                "Test Description",
-                AgendaStatus.CREATED,
-                LocalDateTime.now(),
-                null
-        );
-
-        Agenda agenda2 = new Agenda(
-                null,
-                "Test Agenda4",
-                "Test Description",
-                AgendaStatus.CREATED,
-                LocalDateTime.now(),
-                null
-        );
-
-        Agenda savedAgenda1 = agendaPersistenceAdapter.save(agenda1);
-        Agenda savedAgenda2 = agendaPersistenceAdapter.save(agenda2);
-
         VotingSession votingSession1 = new VotingSession(
                 null,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusMinutes(1),
-                savedAgenda1
+                TimeUtils.getDateTimeNow(),
+                TimeUtils.getDateTimeNowPlusOneMinute()
         );
 
 
         VotingSession votingSession2 = new VotingSession(
                 null,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusMinutes(1),
-                savedAgenda2
+                TimeUtils.getDateTimeNow(),
+                TimeUtils.getDateTimeNowPlusOneMinute()
         );
 
         votingSessionPersistenceAdapter.save(votingSession1);

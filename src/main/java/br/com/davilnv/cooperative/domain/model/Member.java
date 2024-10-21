@@ -12,6 +12,10 @@ public class Member {
     public Member() {
     }
 
+    public Member(UUID id) {
+        this.id = id;
+    }
+
     public Member(UUID id, String cpf, String memberName, LocalDate birthDate) {
         this.id = id;
         this.cpf = cpf;

@@ -2,10 +2,14 @@ package br.com.davilnv.cooperative.infrastructure.adapters.output.persistence;
 
 import br.com.davilnv.cooperative.application.ports.output.VotingSessionOutputPort;
 import br.com.davilnv.cooperative.domain.exception.NotFoundVotingSessionException;
+import br.com.davilnv.cooperative.domain.model.Vote;
 import br.com.davilnv.cooperative.domain.model.VotingSession;
 import br.com.davilnv.cooperative.infrastructure.adapters.output.persistence.entity.VotingSessionEntity;
+import br.com.davilnv.cooperative.infrastructure.adapters.output.persistence.entity.VotingSessionVoteEntity;
 import br.com.davilnv.cooperative.infrastructure.adapters.output.persistence.mapper.VotingSessionMapper;
+import br.com.davilnv.cooperative.infrastructure.adapters.output.persistence.mapper.VotingSessionVoteEntityMapper;
 import br.com.davilnv.cooperative.infrastructure.adapters.output.persistence.repository.VotingSessionRepository;
+import br.com.davilnv.cooperative.infrastructure.adapters.output.persistence.repository.VotingSessionVoteRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -16,15 +20,31 @@ import java.util.UUID;
 public class VotingSessionPersistenceAdapter implements VotingSessionOutputPort {
 
     private final VotingSessionRepository votingSessionRepository;
+    private final VotingSessionVoteRepository votingSessionVoteRepository;
 
-    public VotingSessionPersistenceAdapter(VotingSessionRepository votingSessionRepository) {
+    public VotingSessionPersistenceAdapter(VotingSessionRepository votingSessionRepository, VotingSessionVoteRepository votingSessionVoteRepository) {
         this.votingSessionRepository = votingSessionRepository;
+        this.votingSessionVoteRepository = votingSessionVoteRepository;
     }
 
     @Override
     public VotingSession save(VotingSession votingSession) {
         VotingSessionEntity votingSessionEntity = VotingSessionMapper.toEntity(votingSession);
+
+        // Mapeia os votos da sessão de votação
+        List<VotingSessionVoteEntity> votingSessionVoteEntities = votingSession.getVotes()
+                .stream()
+                .map(VotingSessionVoteEntityMapper::toEntity)
+                .toList();
+        votingSessionEntity.setVotes(votingSessionVoteEntities);
+
         return VotingSessionMapper.toDomain(votingSessionRepository.save(votingSessionEntity));
+    }
+
+    @Override
+    public Vote saveVote(Vote vote) {
+        VotingSessionVoteEntity votingSessionVoteEntity = VotingSessionVoteEntityMapper.toEntity(vote);
+        return VotingSessionVoteEntityMapper.toDomain(votingSessionVoteRepository.save(votingSessionVoteEntity));
     }
 
     @Override
