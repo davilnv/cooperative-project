@@ -5,8 +5,10 @@ import br.com.davilnv.cooperative.application.ports.input.GetVotingSessionUseCas
 import br.com.davilnv.cooperative.application.ports.input.PerformVoteUseCase;
 import br.com.davilnv.cooperative.application.ports.output.AgendaOutputPort;
 import br.com.davilnv.cooperative.application.ports.output.MemberOutputPort;
+import br.com.davilnv.cooperative.application.ports.output.VoteEligibilityOutputPort;
 import br.com.davilnv.cooperative.application.ports.output.VotingSessionOutputPort;
 import br.com.davilnv.cooperative.domain.enums.AgendaStatus;
+import br.com.davilnv.cooperative.domain.enums.VoteEligibility;
 import br.com.davilnv.cooperative.domain.exception.*;
 import br.com.davilnv.cooperative.domain.model.Agenda;
 import br.com.davilnv.cooperative.domain.model.Member;
@@ -24,11 +26,13 @@ public class VotingSessionService implements CreateVotingSessionUseCase, GetVoti
     private final VotingSessionOutputPort votingSessionOutputPort;
     private final AgendaOutputPort agendaOutputPort;
     private final MemberOutputPort memberOutputPort;
+    private final VoteEligibilityOutputPort voteEligibilityOutputPort;
 
-    public VotingSessionService(VotingSessionOutputPort votingSessionOutputPort, AgendaOutputPort agendaOutputPort, MemberOutputPort memberOutputPort) {
+    public VotingSessionService(VotingSessionOutputPort votingSessionOutputPort, AgendaOutputPort agendaOutputPort, MemberOutputPort memberOutputPort, VoteEligibilityOutputPort voteEligibilityOutputPort) {
         this.votingSessionOutputPort = votingSessionOutputPort;
         this.agendaOutputPort = agendaOutputPort;
         this.memberOutputPort = memberOutputPort;
+        this.voteEligibilityOutputPort = voteEligibilityOutputPort;
     }
 
     @Override
@@ -91,6 +95,15 @@ public class VotingSessionService implements CreateVotingSessionUseCase, GetVoti
                 // Verifica se o associado já votou
                 if (votingSession.getVotes().stream().anyMatch(v -> v.getMember().equals(member))) {
                     throw new MemberAlreadyVotedException("Associado já votou na pauta de ID: " + vote.getAgenda().getId());
+                }
+
+                // Verifica se o associado pode votar na pauta
+                try {
+                    if (voteEligibilityOutputPort.checkVotingEligibility(member.getCpf()).equals(VoteEligibility.UNABLE_TO_VOTE)) {
+                        throw new MemberAlreadyVotedException("Associado não pode votar na pauta de ID: " + vote.getAgenda().getId());
+                    }
+                } catch (Exception e) {
+                    throw new InvalidInformationVoteException(e.getMessage());
                 }
 
                 // Voto realizado
