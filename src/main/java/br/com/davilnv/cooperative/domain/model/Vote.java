@@ -3,6 +3,7 @@ package br.com.davilnv.cooperative.domain.model;
 import br.com.davilnv.cooperative.domain.enums.MemberVote;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class Vote {
     private Agenda agenda;
@@ -50,5 +51,18 @@ public class Vote {
 
     public void setVoteDateTime(LocalDateTime voteDateTime) {
         this.voteDateTime = voteDateTime;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        Vote vote = (Vote) obj;
+
+        if (!Objects.equals(agenda, vote.agenda)) return false;
+        if (!Objects.equals(member, vote.member)) return false;
+        if (memberVote != vote.memberVote) return false;
+        return Objects.equals(voteDateTime, vote.voteDateTime);
     }
 }
